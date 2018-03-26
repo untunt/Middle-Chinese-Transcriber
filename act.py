@@ -14,11 +14,17 @@ input_str = sys.argv[1]
 
 word = input_str.split()
 for i, s in enumerate(word):
-    if s not in consonant[trans_from] and trans_from == 'zimu':
-        consonant_no = consonant['vari'].index(s)
+    c = s[0]
+    v = s[-1]
+    if c not in consonant[trans_from] and trans_from == 'zimu':
+        c_index = consonant['vari'].index(c)
     else:
-        consonant_no = consonant[trans_from].index(s)
-    word[i] = consonant[trans_to][consonant_no]
+        c_index = consonant[trans_from].index(c)
+    if v not in vowel[trans_from] and trans_from == 'zimu':
+        v_index = consonant['vari'].index(v)
+    else:
+        v_index = consonant[trans_from].index(v)
+    word[i] = consonant[trans_to][c_index] + vowel[trans_to][v_index]
 
 output_str = ' '.join(word)
 
