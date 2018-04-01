@@ -26,6 +26,7 @@ def writelist(file, english_name, chinese_name):
     f.write('\n}\n\n')
 
 
-f = open('list.py', 'w', encoding='utf_8')
-writelist(f, 'consonant', '声母')
+f = open('lists.py', 'w', encoding='utf_8')
+writelist(f, 'onset', '声母')
+writelist(f, 'rhyme', '韵母')
 f.close()
