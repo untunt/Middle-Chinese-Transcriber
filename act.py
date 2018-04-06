@@ -59,7 +59,24 @@ def convert(in_str, in_type, out_type):
     # generate output
     #print(index2str(rhyme_i, out_type, rhyme))
     out_str = index2str(onset_i, out_type, onset) + index2str(rhyme_i, out_type, rhyme)
-    if out_type == 'poly':
+    if out_type == 'unt':
+        if tone == 1: # 平声
+            out_str += '˦˦'
+        elif tone == 4: # 入声
+            if out_str[-2:] == 'ŋ':
+                out_str = out_str[0:-2] + 'k'
+            elif out_str[-1] == 'n':
+                out_str = out_str[0:-1] + 't'
+            elif out_str[-1] == 'm':
+                out_str = out_str[0:-1] + 'p'
+            #else:
+            #    print('Error')
+            out_str += '˥˧'
+        elif tone == 3: # 去声
+            out_str += '˥˧'
+        else: # tone == 2; 上声
+            out_str += '˧˥'
+    elif out_type == 'poly':
         if tone != 1:
             if tone == 4: # 入声
                 if out_str[-2:] == 'ng':
@@ -72,10 +89,9 @@ def convert(in_str, in_type, out_type):
                 #    print('Error')
             elif tone == 3: # 去声
                 if out_str[-1] != 'd':
-                    out_str = out_str + 'h'
+                    out_str += 'h'
             else: # tone == 2; 上声
-                out_str = out_str + 'x'
-    #elif out_type == 'poly':
+                out_str += 'x'
     return out_str
                 
 argc = len(sys.argv)
