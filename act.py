@@ -27,6 +27,16 @@ def index2str(index, out_type, list_name):
         return index
     return list_name[out_type][index]
 
+# Return the Voicing (清浊) of given onset index
+def qzh(index):
+    if onset['_qzh'][index] == '全清':
+        return 1;
+    if onset['_qzh'][index] == '次清':
+        return 2;
+    if onset['_qzh'][index] == '全浊':
+        return 3;
+    return 4; # '次浊'
+
 def convert(in_str, in_type, out_type):
     # analyze input
     if in_type == 'zimu':
@@ -61,7 +71,10 @@ def convert(in_str, in_type, out_type):
     out_str = index2str(onset_i, out_type, onset) + index2str(rhyme_i, out_type, rhyme)
     if out_type == 'unt':
         if tone == 1: # 平声
-            out_str += '˦˦'
+            if qzh(onset_i) < 3:
+                out_str += '˦˦'
+            else:
+                out_str += '˨˨'
         elif tone == 4: # 入声
             if out_str[-2:] == 'ŋ':
                 out_str = out_str[0:-2] + 'k'
@@ -71,11 +84,20 @@ def convert(in_str, in_type, out_type):
                 out_str = out_str[0:-1] + 'p'
             #else:
             #    print('Error')
-            out_str += '˥˧'
+            if qzh(onset_i) < 3:
+                out_str += '˥˧'
+            else:
+                out_str += '˧˩'
         elif tone == 3: # 去声
-            out_str += '˥˧'
+            if qzh(onset_i) < 3:
+                out_str += '˥˧'
+            else:
+                out_str += '˧˩'
         else: # tone == 2; 上声
-            out_str += '˧˥'
+            if qzh(onset_i) < 3:
+                out_str += '˧˥'
+            else:
+                out_str += '˩˧'
     elif out_type == 'poly':
         if tone != 1:
             if tone == 4: # 入声
@@ -114,7 +136,7 @@ print()
 print('====================================')
 print('|  unt\'s Ancient (Middle) Chinese  |')
 print('|      Phonology  Transcriber      |')
-print('|     ( unt 的中古音韵转写器 )     |')
+print('|      (unt 的中古音韵转写器)      |')
 print('====================================')
 print()
 print(out_str)
