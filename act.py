@@ -45,11 +45,13 @@ def str2index(in_str, in_type, list_name):
             
             if len(in_str) != 1:
                 return -1
-            first_i = list_name['_yun'].index(in_str)
-            if first_i == -1:
+            if in_str in list_name['_yun']:
+                first_i = list_name['_yun'].index(in_str)
+            else:
                 first_i = vari2index(in_str, in_type, list_name)
             if first_i == -1 or list_name['_overlap'][first_i] == '':
                 return first_i
+            
             iter_i = first_i
             while list_name['_yun'][iter_i] == list_name['_yun'][first_i]:
                 found = True
@@ -89,6 +91,7 @@ def convert(in_str, in_type, out_type):
         onset_i = str2index(in_str[0], in_type, onset)
         if onset_i < 0:
             print('Error: The onset \"' + in_str[0] + '\" cannot be found in the list! (code: ' + str(onset_i) + ')\n')
+            return 'Error'
 
         # rhyme part
         r = in_str[1:]
@@ -111,11 +114,14 @@ def convert(in_str, in_type, out_type):
         rhyme_i = str2index(r, in_type, rhyme)
         if rhyme_i < 0:
             print('Error: The rhyme \"' + in_str + '\" cannot be found in the list! (code: ' + str(rhyme_i) + ')\n')
+            return 'Error'
         # complex rhyme search needed occasion
     
     # generate output
     #print(index2str(rhyme_i, out_type, rhyme))
-    out_str = index2str(onset_i, out_type, onset) + index2str(rhyme_i, out_type, rhyme)
+    out_onset = index2str(onset_i, out_type, onset)
+    out_rhyme = index2str(rhyme_i, out_type, rhyme)
+    out_str = out_onset + out_rhyme
     if out_type == 'unt':
         if tone == 1: # 平声
             if qzh(onset_i) < 3:
@@ -148,6 +154,23 @@ def convert(in_str, in_type, out_type):
         if onset['_zu'][onset_i] == '帮': # remove medial "u" after bilabial consonant
             out_str = out_str.replace('u̯', '')
     elif out_type == 'poly':
+        # 1. 含r之声母（知组与庄组）及二等韵（以r起始）相拼时省去一r
+        out_str = out_str.replace('rr', 'r')
+        
+        # 2. 唇牙喉音声母之重纽A类（即重纽四等，含谆韵）于声、韵母间加一j
+        if ('A' in rhyme['zimu'][rhyme_i] or rhyme['zimu'][rhyme_i] == '臻') \
+           and (onset['_zu'][onset_i] in ['帮', '见'] or out_onset in ['h', 'qh']):
+            out_str = out_onset + 'j' + out_rhyme
+        
+        # 3. j与开口三等韵相拼时，除脂ii、之i、真in、蒸ing、侵im五韵外，j后面之i应省去
+        if rhyme['_yun'][rhyme_i] not in ['脂', '之', '真', '蒸', '侵']:
+            out_str = out_str.replace('ji', 'j')
+        
+        # 5. 若声母与韵母搭配不正常（一般为三等与非三等搭配问题），可以'分隔声韵母
+        if onset['_zu'][onset_i] in ['章', '以', '日'] and out_rhyme[0] not in ['i', 'y', 'j']:
+            out_str = out_onset + '\'' + out_rhyme
+        
+        # convert tone
         if tone != 1:
             if tone == 4: # 入声
                 if out_str[-2:] == 'ng':

@@ -281,25 +281,25 @@ rhyme = {
         '拯证證职職', '', '等嶝德', '',
         '厚候', '有宥', '黝幼',
         '寑沁缉緝', '',
-        '感勘合', '談敢阚闞盍', '鹽琰豔艳艶葉叶', '', '忝㮇怗', '豏陷洽', '銜槛檻鉴鑑鑒狎', '嚴俨儼酽釅业業[凡]', '梵范乏[严嚴]'
+        '感勘合', '談敢阚闞盍', '鹽琰豔艳艶葉叶', '', '忝㮇怗帖', '豏陷洽', '銜槛檻鉴鑑鑒狎', '嚴俨儼酽釅业業[凡]', '梵范乏[严嚴]'
     ],
     'poly': [
         'ung', 'yung', 'uung', 'iung',
         'rung',
-        'je', 'jye', 'ie', 'ye', 'jii', 'jyi', 'ii', 'yi', 'i', 'ioi', 'yoi',
+        'ie', 'ye', 'ie', 'ye', 'ii', 'yi', 'ii', 'yi', 'i', 'ioi', 'yoi',
         'io', 'o', 'yo',
-        'e', 'ue', 'jed', 'jyed', 'ied', 'yed', 'ad', 'uad', 're', 'rue', 'rai', 'ruai', 'rad', 'ruad', 'ai', 'uai', 'iad', 'yad',
-        'jin', 'in', 'yn', 'in', 'yn', 'ion', 'yon', 'ian', 'yan', 'on', 'uon',
-        'an', 'uan', 'ran', 'ruan', 'ren', 'ruen', 'en', 'uen', 'jen', 'jyen', 'ien', 'yen',
-        'eu', 'jeu', 'ieu', 'rau', 'au',
+        'e', 'ue', 'ied', 'yed', 'ied', 'yed', 'ad', 'uad', 're', 'rue', 'rai', 'ruai', 'rad', 'ruad', 'ai', 'uai', 'iad', 'yad',
+        'in', 'in', 'yn', 'in', 'yn', 'ion', 'yon', 'ian', 'yan', 'on', 'uon',
+        'an', 'uan', 'ran', 'ruan', 'ren', 'ruen', 'en', 'uen', 'ien', 'yen', 'ien', 'yen',
+        'eu', 'ieu', 'ieu', 'rau', 'au',
         'a', 'ua', 'ia', 'ya',
         'ra', 'rua', 'ia',
         'iang', 'yang', 'ang', 'uang',
         'rang', 'ruang', 'ieng', 'yeng', 'reng', 'rueng', 'ieng', 'yeng', 'eng', 'ueng',
         'ong', 'uong', 'ing', 'yng',
         'u', 'iu', 'y',
-        'jim', 'im',
-        'om', 'am', 'jem', 'iem', 'em', 'rem', 'ram', 'iam', 'yam'
+        'im', 'im',
+        'om', 'am', 'iem', 'iem', 'em', 'rem', 'ram', 'iam', 'yam'
     ],
     'yugan': [
         'ūŋ', 'ǖūŋ', 'ōŋ', 'iōŋ',
@@ -354,6 +354,24 @@ rhyme = {
         'ɘu̯', 'ɨu̯', 'iu̯',
         'im', 'ɨ̯im',
         'ɐm', 'ɑm', 'i̯ɛm', 'ɨ̯i̯ɛm', 'em', 'ɨ̯æm', 'ɨ̯am', 'i̯əm', 'i̯əm'
+    ],
+    'msoeg': [
+        'ouŋ', 'uŋ', 'ɔŋ', 'uɔŋ',
+        'ʴɜuŋ',
+        'ie', 'ʷie', 'ɯe', 'ue', 'ʴi', 'ʴʷi', 'i', 'ʷi', 'ɯ', 'ɯi', 'ui',
+        'ɯɤ', 'o', 'uo',
+        'ɛi', 'ʷɛi', 'iɛi', 'ʴʷiɛi', 'iɛi', 'ʴʷiɛi', 'ɑi', 'ʷɑi', 'ʴɜ', 'ʴʷɜ', 'ʴɛi', 'ʴʷɛi', 'ʴai', 'ʴʷai', 'ʌi', 'ʷɔi', 'ɯʌi', 'uɔi',
+        'in', 'ʴin', 'ʴʷin', 'in', 'ʷin', 'ɯn', 'un', 'ɯʌn', 'uɔn', 'ʌn', 'ʷɔn',
+        'ɑn', 'ʷɑn', 'ʴan', 'ʴʷan', 'ʴɜn', 'ʴʷɜn', 'ɛn', 'ʷɛn', 'iɛn', 'ʷiɛn', 'ʴiɛn', 'ʴʷiɛn',
+        'ɛu', 'iæu', 'ɯæu', 'ʴau', 'ɑu',
+        'ɑ', 'ʷɑ', 'ɯɑ', 'uɑ',
+        'ʴa', 'ʴʷa', 'iæ',
+        'ɯɑɔŋ', 'uɑɔŋ', 'ɑɔŋ', 'ʷɑɔŋ',
+        'ʴaɯŋ', 'ʴʷaɯŋ', 'ʴiæɯŋ', 'ʴʷiæɯŋ', 'ʴɜɯŋ', 'ʴʷɜɯŋ', 'iæɯŋ', 'ʷiæɯŋ', 'ɛɯŋ', 'ʷɛɯŋ',
+        'ɯŋ', 'ʷɯŋ', 'ʌɯŋ', 'ʷʌɯŋ',
+        'ou', 'u', 'iu',
+        'im', 'ʴim',
+        'ʌm', 'ɑm', 'iɛm', 'ʴiɛm', 'ɛm', 'ʴɛm', 'ʴam', 'ɯʌm', 'uɔm'
     ]
 }
 
