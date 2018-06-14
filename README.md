@@ -1,20 +1,20 @@
 # Ancient Chinese Transcriber
 
-unt¡¯s Ancient (Middle) Chinese Phonology Transcriber
+untâ€™s Ancient (Middle) Chinese Phonology Transcriber
 
-unt µÄÖĞ¹ÅÒôÔÏ×ªĞ´Æ÷
+unt çš„ä¸­å¤éŸ³éŸµè½¬å†™å™¨
 
 # Arguments and Their Explanation
 
 |Arg. Name|Explanation|Impl. Date|
 |-|-|-|
-|`zimu`|Names of onsets and rhymes in traditional phonology<br>´«Í³ÒôÔÏÑ§ÖĞµÄÉùÄ¸¡¢ÔÏÄ¸Ãû|O: 2018.3.20<br>Ro: 2018.3.31<br>Ri: 2018.4.20|
-|`poly`|Polyhedron's romanization of Middle Chinese <br>Polyhedron µÄÖĞ¹ÅººÓïÆ´Òô<br>Ref.: [ÖĞ¹ÅººÓïÆ´Òô](https://zh.wikipedia.org/wiki/User:Polyhedron/%E4%B8%AD%E5%8F%A4%E6%BC%A2%E8%AA%9E%E6%8B%BC%E9%9F%B3 "ÖĞ¹ÅººÓïÆ´Òô")|O: 2018.3.20<br>Ro: 2018.4.29|
-|`hxs`|Reconstruction of Middle Chinese by Xiaoshan Huang<br>»ÆĞ¦É½µÄÖĞ¹ÅººÓïÄâÒô<br>Ref.: »ÆĞ¦É½¡¶¡´ÇĞí¡µºÍÖĞÌÆÎå´úÒôÎ»Ïµ½y¡·|R: Unfinished|
-|`msoeg`|Reconstruction of Middle Chinese by msoeg<br>msoeg µÄÖĞ¹ÅººÓïÄâÒô<br>Ref.:[¡¾ººÓïÒôÔÏÑ§±Ê¼Ç¡¿ÖĞ¹ÅººÓï](https://zhuanlan.zhihu.com/p/23576833 "¡¾ººÓïÒôÔÏÑ§±Ê¼Ç¡¿ÖĞ¹ÅººÓï")|R: Unfinished|
-|`unt`|Reconstruction of Middle Chinese by unt (private use)<br>unt µÄÖĞ¹ÅººÓïÄâÒô£¨Ë½ÓÃ£©|O: 2018.3.31|
-|`yugan`|unt's General Romanization (private use)<br>unt µÄÍ¨ÓÃÆ´Òô£¨Ë½ÓÃ£©|O: 2018.3.31|
-|`yugun`|unt's General Romanization, without combining diacritics<br>unt µÄÍ¨ÓÃÆ´Òô£¬²»Ê¹ÓÃ×éºÏ·ûºÅ|O: 2018.3.31|
+|`zimu`|Names of onsets and rhymes in traditional phonology<br>ä¼ ç»ŸéŸ³éŸµå­¦ä¸­çš„å£°æ¯ã€éŸµæ¯å|O: 2018.3.20<br>Ro: 2018.3.31<br>Ri: 2018.4.20|
+|`poly`|Polyhedron's romanization of Middle Chinese <br>Polyhedron çš„ä¸­å¤æ±‰è¯­æ‹¼éŸ³<br>Ref.: [ä¸­å¤æ±‰è¯­æ‹¼éŸ³](https://zh.wikipedia.org/wiki/User:Polyhedron/%E4%B8%AD%E5%8F%A4%E6%BC%A2%E8%AA%9E%E6%8B%BC%E9%9F%B3 "ä¸­å¤æ±‰è¯­æ‹¼éŸ³")|O: 2018.3.20<br>Ro: 2018.4.29|
+|`hxs`|Reconstruction of Middle Chinese by Xiaoshan Huang<br>é»„ç¬‘å±±çš„ä¸­å¤æ±‰è¯­æ‹ŸéŸ³<br>Ref.: é»„ç¬‘å±±ã€Šã€ˆåˆ‡éŸ»ã€‰å’Œä¸­å”äº”ä»£éŸ³ä½ç³»çµ±ã€‹|R: Unfinished|
+|`msoeg`|Reconstruction of Middle Chinese by msoeg<br>msoeg çš„ä¸­å¤æ±‰è¯­æ‹ŸéŸ³<br>Ref.:[ã€æ±‰è¯­éŸ³éŸµå­¦ç¬”è®°ã€‘ä¸­å¤æ±‰è¯­](https://zhuanlan.zhihu.com/p/23576833 "ã€æ±‰è¯­éŸ³éŸµå­¦ç¬”è®°ã€‘ä¸­å¤æ±‰è¯­")|R: Unfinished|
+|`unt`|Reconstruction of Middle Chinese by unt (private use)<br>unt çš„ä¸­å¤æ±‰è¯­æ‹ŸéŸ³ï¼ˆç§ç”¨ï¼‰|O: 2018.3.31|
+|`yugan`|unt's General Romanization (private use)<br>unt çš„é€šç”¨æ‹¼éŸ³ï¼ˆç§ç”¨ï¼‰|O: 2018.3.31|
+|`yugun`|unt's General Romanization, without combining diacritics<br>unt çš„é€šç”¨æ‹¼éŸ³ï¼Œä¸ä½¿ç”¨ç»„åˆç¬¦å·|O: 2018.3.31|
 
 Letters in column *Impl. Date* (Implementation Date):
 - 1<sup>st</sup> letter: *O* for onsets, *R* for rhyme and *F* stands for full (onsets + rhymes).
