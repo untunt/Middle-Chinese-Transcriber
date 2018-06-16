@@ -1,6 +1,7 @@
 # regenerate consonants and vowels list from list_consonant.txt
 
-def writelist(file, english_name, chinese_name):
+
+def write_list(file, english_name, chinese_name):
     with open('list_' + english_name + '.txt', encoding='utf_16') as fi:
         lines = fi.readlines()
 
@@ -8,25 +9,25 @@ def writelist(file, english_name, chinese_name):
     for line in lines:
         data.append(line.replace('\n', '').split('\t'))
         
-    f.write('# ' + chinese_name + '\n')
-    f.write(english_name + ' = {\n')
+    file.write('# ' + chinese_name + '\n')
+    file.write(english_name + ' = {\n')
     for j in range(1, len(data[0])):
         if j != 1:
-            f.write(',\n')
-        f.write('    \'' + data[0][j] + '\': [')
+            file.write(',\n')
+        file.write('    \'' + data[0][j] + '\': [')
         
         for i in range(1, len(data)):
             if i != 1:
-                f.write(',')
+                file.write(',')
             if data[i][0] == '1':
-                f.write('\n       ')
-            f.write(' \'' + data[i][j] + '\'')
+                file.write('\n       ')
+            file.write(' \'' + data[i][j] + '\'')
             
-        f.write('\n    ]')
-    f.write('\n}\n\n')
+        file.write('\n    ]')
+    file.write('\n}\n\n')
 
 
 f = open('lists.py', 'w', encoding='utf_8')
-writelist(f, 'onset', '声母')
-writelist(f, 'rhyme', '韵母')
+write_list(f, 'onset', '声母')
+write_list(f, 'rhyme', '韵母')
 f.close()

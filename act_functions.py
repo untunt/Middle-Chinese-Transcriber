@@ -1,14 +1,6 @@
 from lists import *
 
 
-def act(words_str, in_type, out_type):
-    words = words_str.split()
-    for i, word in enumerate(words):
-        (onset_index, rhyme_index, tone) = convert_input(word, in_type)
-        words[i] = convert_output(onset_index, rhyme_index, tone, out_type, words_str)
-    return " ".join(words)
-
-
 # Convert variant characters (异体字) to its index (row no.)
 # simplified character is in column 'zimu'
 # variant characters are in column '_vari'
@@ -21,64 +13,65 @@ def vari2index(in_str, list_name):
 
 
 def str2index(in_str, in_type, list_name):
-    if in_str not in list_name[in_type]:
-        if in_type == 'zimu':
-            if list_name == onset:
-                return vari2index(in_str, list_name)
+    if in_str in list_name[in_type]:
+        return list_name[in_type].index(in_str)
 
-            # for rhyme
-            # get and remove deng-hu (等呼)
-            deng = ''
-            chongniu = ''
-            hu = ''
-            if '一' in in_str:  # 1st deng
-                deng = '一'
-            elif '二' in in_str:  # 2nd deng
-                deng = '二'
-            elif '三' in in_str:  # 3rd deng
-                deng = '三'
-                if 'A' in in_str or 'a' in in_str:  # 3a deng
-                    chongniu = 'A'
-                elif 'B' in in_str or 'b' in in_str:  # 3b deng
-                    chongniu = 'B'
-            elif '四' in in_str:  # 4th deng
-                deng = '四'
-            if '开' in in_str or '開' in in_str:  # unrounded (开口)
-                hu = '开'
-            elif '合' in in_str:  # rounded (合口)
-                hu = '合'
-            in_str = in_str.strip('一二三四AaBb开開合口')
+    # if not, the input string may be a variant zimu or a complex zimu
+    if in_type == 'zimu':
+        if list_name == onset:
+            return vari2index(in_str, list_name)
 
-            if len(in_str) != 1:
-                return -1
-            if in_str in list_name['_yun']:
-                first_index = list_name['_yun'].index(in_str)
-            else:
-                first_index = vari2index(in_str, list_name)
-            if first_index == -1 or list_name['_overlap'][first_index] == '':
-                return first_index
+        # for rhyme
+        # get and remove deng-hu (等呼)
+        deng = ''
+        chongniu = ''
+        hu = ''
+        if '一' in in_str:  # 1st deng
+            deng = '一'
+        elif '二' in in_str:  # 2nd deng
+            deng = '二'
+        elif '三' in in_str:  # 3rd deng
+            deng = '三'
+            if 'A' in in_str or 'a' in in_str:  # 3a deng
+                chongniu = 'A'
+            elif 'B' in in_str or 'b' in in_str:  # 3b deng
+                chongniu = 'B'
+        elif '四' in in_str:  # 4th deng
+            deng = '四'
+        if '开' in in_str or '開' in in_str:  # unrounded (开口)
+            hu = '开'
+        elif '合' in in_str:  # rounded (合口)
+            hu = '合'
+        in_str = in_str.strip('一二三四AaBb开開合口')
 
-            iter_index = first_index
-            while list_name['_yun'][iter_index] == list_name['_yun'][first_index]:
-                found = True
-                if 'd' in list_name['_overlap'][iter_index] and deng not in list_name['_deng'][iter_index]:
-                    found = False
-                if 'c' in list_name['_overlap'][iter_index] and chongniu not in list_name['_deng'][iter_index]:
-                    found = False
-                if 'h' in list_name['_overlap'][iter_index] and hu != list_name['_hu'][iter_index]:
-                    found = False
-                if found:
-                    return iter_index
-                iter_index += 1
+        if len(in_str) != 1:
             return -1
+        if in_str in list_name['_yun']:
+            first_index = list_name['_yun'].index(in_str)
         else:
-            return -1
-    return list_name[in_type].index(in_str)
+            first_index = vari2index(in_str, list_name)
+        if first_index == -1 or list_name['_overlap'][first_index] == '':
+            return first_index
+
+        iter_index = first_index
+        while list_name['_yun'][iter_index] == list_name['_yun'][first_index]:
+            found = True
+            if 'd' in list_name['_overlap'][iter_index] and deng not in list_name['_deng'][iter_index]:
+                found = False
+            if 'c' in list_name['_overlap'][iter_index] and chongniu not in list_name['_deng'][iter_index]:
+                found = False
+            if 'h' in list_name['_overlap'][iter_index] and hu != list_name['_hu'][iter_index]:
+                found = False
+            if found:
+                return iter_index
+            iter_index += 1
+        return -1
+    return -1
 
 
 def index2str(index, out_type, list_name):
     if index < 0:
-        return index
+        return ''
     return list_name[out_type][index]
 
 
@@ -93,47 +86,47 @@ def qzh(index):
     return 4  # '次浊'
 
 
-def convert_input(in_str, in_type):
-    # analyze input
-    onset_index = 0
-    rhyme_index = 0
+def error(message):
+    print('Error: ' + message)
+
+
+def error_fourth_tone(word):
+    error('The rhyme of "' + word + '" is not a 4th-tone rhyme but its tone is the 4th!')
+
+
+def convert_input(word, in_type):
+    # analyze the input string and split it into 3 parts: onset, rhyme and tone
+    in_onset = ''
+    in_rhyme = ''
     tone = 0
     if in_type == 'zimu':
-        # index of onset
-        onset_index = str2index(in_str[0], in_type, onset)
-        if onset_index < 0:
-            print('Error: The onset \"' + in_str[0] + '\" cannot be found in the list! (code: ' + str(onset_index) + ')\n')
-            return 'Error'
-
-        # rhyme part
-        r = in_str[1:]
-
-        # get and remove tone (调/diao)
-        if '平' in r:  # 1st tone (平声/pingsheng) appears most
+        in_onset = word[0]
+        in_rhyme = word[1:]
+        # get and remove the tone (调/diao)
+        if '平' in in_rhyme:  # 1st tone (平声/pingsheng) appears most
             tone = 1
-        elif '入' in r:  # 4th tone (入声/rusheng)
+        elif '入' in in_rhyme:  # 4th tone (入声/rusheng)
             tone = 4
-        elif '去' in r:  # 3rd tone (去声/qusheng)
+        elif '去' in in_rhyme:  # 3rd tone (去声/qusheng)
             tone = 3
-        elif '上' in r:  # 2nd tone (上声/shangsheng)
+        elif '上' in in_rhyme:  # 2nd tone (上声/shangsheng)
             tone = 2
-        else:
-            print('Error: The description \"' + in_str + '\" contains no tone! 1st tone (平声) is set.\n')
-            tone = 1
-        r = r.strip('平上赏賞去入声聲调調')
+        in_rhyme = in_rhyme.strip('平上赏賞去入声聲调調')
+    onset_index = str2index(in_onset, in_type, onset)
+    if onset_index < 0:
+        error('The onset "' + word[0] + '" cannot be found in the list! (code: ' + str(onset_index) + ')')
+    rhyme_index = str2index(in_rhyme, in_type, rhyme)
+    if rhyme_index < 0:
+        error('The rhyme "' + in_rhyme + '" cannot be found in the list! (code: ' + str(rhyme_index) + ')')
+    if tone == 0:
+        error('The description "' + word + '" contains no tone! 1st tone (平声) is set.')
+        tone = 1
+    # complex rhyme search needed occasion
 
-        # index of rhyme
-        rhyme_index = str2index(r, in_type, rhyme)
-        if rhyme_index < 0:
-            print('Error: The rhyme \"' + in_str + '\" cannot be found in the list! (code: ' + str(rhyme_index) + ')\n')
-            return 'Error'
-        # complex rhyme search needed occasion
     return onset_index, rhyme_index, tone
 
 
-def convert_output(onset_index, rhyme_index, tone, out_type, in_str):
-    # generate output
-    # print(index2str(rhyme_index, out_type, rhyme))
+def convert_output(onset_index, rhyme_index, tone, out_type, word):
     out_onset = index2str(onset_index, out_type, onset)
     out_rhyme = index2str(rhyme_index, out_type, rhyme)
     out_str = out_onset + out_rhyme
@@ -151,7 +144,7 @@ def convert_output(onset_index, rhyme_index, tone, out_type, in_str):
             elif out_str[-1] == 'm':
                 out_str = out_str[0:-1] + 'p'
             else:
-                print('Error: The rhyme of "' + in_str + '" is not a 4th-tone rhyme but its tone is 4th!\n')
+                error_fourth_tone(word)
             if qzh(onset_index) < 3:
                 out_str += '˥˧'
             else:
@@ -183,7 +176,7 @@ def convert_output(onset_index, rhyme_index, tone, out_type, in_str):
 
         # 5. 若声母与韵母搭配不正常（一般为三等与非三等搭配问题），可以'分隔声韵母
         if onset['_zu'][onset_index] in ['章', '以', '日'] and out_rhyme[0] not in ['i', 'y', 'j']:
-            out_str = out_onset + '\'' + out_rhyme
+            out_str = out_onset + "'" + out_rhyme
 
         # convert tone
         if tone != 1:
@@ -202,3 +195,11 @@ def convert_output(onset_index, rhyme_index, tone, out_type, in_str):
             else:  # tone == 2; 上声
                 out_str += 'x'
     return out_str
+
+
+def act(words_str, in_type, out_type):
+    words = words_str.split()
+    for i, word in enumerate(words):
+        (onset_index, rhyme_index, tone) = convert_input(word, in_type)
+        words[i] = convert_output(onset_index, rhyme_index, tone, out_type, word)
+    return ' '.join(words)
