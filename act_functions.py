@@ -1,4 +1,16 @@
-from lists import *
+def read_file(file_name):
+    result = {}
+    with open(file_name, 'r', encoding='utf_16') as f:
+        lines = [line.rstrip('\n').split('\t') for line in f.readlines()]
+        for index, head in enumerate(lines[0]):
+            result[head] = [line[index] for line in lines[1:]]
+    return result
+
+
+# 声母
+onset = read_file('list_onset.txt')
+# 韵母
+rhyme = read_file('list_rhyme.txt')
 
 
 # Convert variant characters (异体字) to its index (row no.)
