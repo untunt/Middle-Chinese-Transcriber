@@ -219,6 +219,8 @@ def act(words_str, in_type, out_type):
     for i, word in enumerate(words):
         (onset_index, rhyme_index, tone) = convert_input(word, in_type)
         words[i] = convert_output(onset_index, rhyme_index, tone, out_type, word)
+    if '\t' in words_str:
+        return '\t'.join(words)
     return ' '.join(words)
 
 
