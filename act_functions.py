@@ -130,15 +130,19 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
     out_onset = index2str(onset_index, out_type, onset)
     out_rhyme = index2str(rhyme_index, out_type, rhyme)
     out_str = out_onset + out_rhyme
-    if out_type == 'unt':
+    if out_type == 'unt' or out_type == 'untF':
         if tone == 1:  # 平声
             if qzh(onset_index) < 3:
-                out_str += '˦˦'
+                out_str += '˦'
             else:
-                out_str += '˨˨'
+                out_str += '˨'
         elif tone == 4:  # 入声
-            if out_str[-1] == 'ŋ':
+            if out_str[-2:] == 'ŋʷ':
+                out_str = out_str[0:-2] + 'kʷ'
+            elif out_str[-1] == 'ŋ':
                 out_str = out_str[0:-1] + 'k'
+            elif out_str[-1] == 'ɲ':
+                out_str = out_str[0:-1] + 'c'
             elif out_str[-1] == 'n':
                 out_str = out_str[0:-1] + 't'
             elif out_str[-1] == 'm':
@@ -160,6 +164,7 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
             else:
                 out_str += '˩˧'
         if onset['_zu'][onset_index] == '帮':  # remove medial "u" after bilabial consonant
+            out_str = out_str.replace('w', '')
             out_str = out_str.replace('u̯', '')
     elif out_type == 'poly':
         # 1. 含r之声母（知组与庄组）及二等韵（以r起始）相拼时省去一r
