@@ -13,22 +13,22 @@ print_logo()
 argc = len(sys.argv)
 
 if argc <= 1:
-    in_type = input("Input type (default: " + DEFAULT_IN_TYPE + ", press enter to use):\n>> ")
-    if in_type == "":
-        print(">> " + DEFAULT_IN_TYPE)
+    in_type = input('Input type (default: ' + DEFAULT_IN_TYPE + ', press enter to use):\n>> ')
+    if in_type == '':
+        print('>> ' + DEFAULT_IN_TYPE)
         in_type = DEFAULT_IN_TYPE
-    out_type = input("Output type (default: " + DEFAULT_OUT_TYPE + ", press enter to use):\n>> ")
-    if out_type == "":
-        print(">> " + DEFAULT_OUT_TYPE)
+    out_type = input('Output type (default: ' + DEFAULT_OUT_TYPE + ', press enter to use):\n>> ')
+    if out_type == '':
+        print('>> ' + DEFAULT_OUT_TYPE)
         out_type = DEFAULT_OUT_TYPE
-    file_name = input("Read input from keyboard (press enter) or from file (input file name)?:\n>> ")
-    if file_name == "":
+    file_name = input('Read input from keyboard (press enter) or from file (input file name)?:\n>> ')
+    if file_name == '':
         while True:
-            in_str = input("Input (press enter to exit):\n>> ")
-            if in_str == "":
+            in_str = input('Input (press enter to exit):\n>> ')
+            if in_str == '':
                 break
-            print("Output:")
-            print(">> " + act(in_str, in_type, out_type))
+            print('Output:')
+            print('>> ' + act(in_str, in_type, out_type))
     else:
         with open(file_name, 'r') as f1:
             with open(OUTPUT_FILE_NAME, 'w', encoding='utf_16') as f2:
