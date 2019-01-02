@@ -220,3 +220,14 @@ def act(words_str, in_type, out_type):
         (onset_index, rhyme_index, tone) = convert_input(word, in_type)
         words[i] = convert_output(onset_index, rhyme_index, tone, out_type, word)
     return ' '.join(words)
+
+
+def print_logo():
+    print("""
+=========================
+  unt' s Middle Chinese
+  Phonology Transcriber
+
+   unt 的中古音韵转写器
+=========================
+""")
