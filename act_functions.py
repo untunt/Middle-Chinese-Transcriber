@@ -181,6 +181,18 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
             out_str = replace_medial(out_str, 'w', '')
             out_str = replace_medial(out_str, 'ɥ', 'j')
             out_str = replace_medial(out_str, 'u̯', '', 3)
+        # remove redundant "j" (以母)
+        if ('jj̈' not in out_str) and ('jɥ̈' not in out_str):
+            out_str = out_str.replace('jj', 'j')
+            out_str = out_str.replace('jɥ', 'ɥ')
+        # add "j̈" (云母) before /ɨ/
+        if out_str[0] == 'ɨ':
+            out_str = 'j̈' + out_str
+        # set 蒸韵 to class III A after 精 and 章 group
+        if (onset['_zu'][onset_index] == '精' or
+                onset['_zu'][onset_index] == '章' or
+                onset['zimu'][onset_index] == '以') and rhyme['_yun'][rhyme_index] == '蒸':
+            out_str = out_str.replace('ɻ', '')
     elif out_type == 'poly':
         # 1. 含r之声母（知组与庄组）及二等韵（以r起始）相拼时省去一r
         out_str = out_str.replace('rr', 'r')
