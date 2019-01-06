@@ -176,8 +176,11 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
             else:
                 out_str += '˩˧'
         if onset['_zu'][onset_index] == '帮':  # remove medial "u" after bilabial consonant
-            out_str = out_str.replace('w', '')
-            out_str = out_str.replace('u̯', '')
+            def replace_medial(string, old, new, end=2):
+                return string[:end].replace(old, new) + string[end:]
+            out_str = replace_medial(out_str, 'w', '')
+            out_str = replace_medial(out_str, 'ɥ', 'j')
+            out_str = replace_medial(out_str, 'u̯', '', 3)
     elif out_type == 'poly':
         # 1. 含r之声母（知组与庄组）及二等韵（以r起始）相拼时省去一r
         out_str = out_str.replace('rr', 'r')
