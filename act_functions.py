@@ -161,7 +161,7 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
                 out_str = out_str[0:-1] + 'p'
             else:
                 error_fourth_tone(word)
-            if qzh(onset_index) < 3:
+            if qzh(onset_index) != 3:
                 out_str += '˥˧'
             else:
                 out_str += '˧˩'
@@ -171,7 +171,7 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
             else:
                 out_str += '˧˩'
         else:  # tone == 2; 上声
-            if qzh(onset_index) < 3:
+            if qzh(onset_index) != 3:
                 out_str += '˧˥'
             else:
                 out_str += '˩˧'
