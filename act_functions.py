@@ -84,6 +84,8 @@ def str2index(in_str, in_type, list_name):
 def index2str(index, out_type, list_name):
     if index < 0:
         return ''
+    if out_type == 'bax1':
+        return list_name['bax'][index]
     return list_name[out_type][index]
 
 
@@ -226,6 +228,47 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
                     out_str += 'h'
             else:  # tone == 2; 上声
                 out_str += 'x'
+    elif out_type == 'bax' or out_type == 'bax1':
+        # After labial initials, there is no contrast between -an, -at, -a and -wan, -wat, -wa
+        if onset['_zu'][onset_index] == '帮' and rhyme['_yun'][rhyme_index] in '废桓戈阳':
+            out_str = out_str.replace('w', '')
+
+        # [chongniu] is limited to syllables with grave initials
+        if onset['_zu'][onset_index] not in '帮见影' \
+                and ('c' in rhyme['_overlap'][rhyme_index] or rhyme['_yun'][rhyme_index] == '清'):
+            if rhyme['_yun'][rhyme_index] in '脂真諄侵':
+                out_str = out_str.replace('ji', 'i')
+                out_str = out_str.replace('jwi', 'wi')
+            else:
+                out_str = out_str.replace('ji', 'j')
+                out_str = out_str.replace('jwi', 'jw')
+        # a prevocalic -j- in the final is omitted after Tsy-
+        if 'y' in out_str:
+            out_str = out_str.replace('yj', 'y')
+            out_str = out_str.replace('yhj', 'yh')
+
+        # convert tone
+        if tone != 1:
+            if tone == 4:  # 入声
+                if out_str[-2:] == 'ng':
+                    out_str = out_str[0:-2] + 'k'
+                elif out_str[-1] == 'n':
+                    out_str = out_str[0:-1] + 't'
+                elif out_str[-1] == 'm':
+                    out_str = out_str[0:-1] + 'p'
+                # else:
+                #    print('Error')
+            elif tone == 3:  # 去声
+                out_str += 'H'
+            else:  # tone == 2; 上声
+                out_str += 'X'
+        if out_type == 'bax1':
+            out_str = out_str.replace('\'', 'ʔ')
+            if rhyme['_yun'][rhyme_index] == '佳':
+                out_str = out_str.replace('ea', 'ɛɨ')
+            out_str = out_str.replace('+', 'ɨ')
+            out_str = out_str.replace('ae', 'æ')
+            out_str = out_str.replace('ea', 'ɛ')
     return out_str
 
 
