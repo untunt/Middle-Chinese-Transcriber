@@ -1,3 +1,7 @@
+def replace_in_head(string, old, new, head_len):
+    return string[:head_len].replace(old, new) + string[head_len:]
+
+
 def read_file(file_name):
     result = {}
     with open(file_name, 'r', encoding='utf-8-sig') as f:
@@ -11,6 +15,12 @@ def read_file(file_name):
 onset = read_file('list_initials.csv')
 # 韵母
 rhyme = read_file('list_finals.csv')
+# IPA tone letters
+# order: 阴平, 阳平, 阴上, 阳上, 阴去, 阳去, 阴入, 阳入
+tone_letters = {
+    'unt': ['˦', '˨˩', '˦˦˥', '˨˨˧', '˥˩', '˧˩˨', '˥', '˨˩'],
+    'untF': ['˦', '˨', '˧˥', '˩˧', '˥˧', '˧˩', '˥˧', '˧˩']
+}
 
 
 # Convert variant characters (异体字) to its index (row no.)
@@ -145,56 +155,72 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
     out_rhyme = index2str(rhyme_index, out_type, rhyme)
     out_str = out_onset + out_rhyme
     if out_type == 'unt' or out_type == 'untF':
-        if tone == 1:  # 平声
-            if qzh(onset_index) < 3:
-                out_str += '˦'
-            else:
-                out_str += '˨'
-        elif tone == 4:  # 入声
-            if out_str[-2:] == 'ŋʷ':
-                out_str = out_str[0:-2] + 'kʷ'
-            elif out_str[-1] == 'ŋ':
-                out_str = out_str[0:-1] + 'k'
-            elif out_str[-1] == 'ɲ':
-                out_str = out_str[0:-1] + 'c'
-            elif out_str[-1] == 'n':
-                out_str = out_str[0:-1] + 't'
-            elif out_str[-1] == 'm':
-                out_str = out_str[0:-1] + 'p'
-            else:
-                error_fourth_tone(word)
-            if qzh(onset_index) != 3:
-                out_str += '˥˧'
-            else:
-                out_str += '˧˩'
-        elif tone == 3:  # 去声
-            if qzh(onset_index) < 3:
-                out_str += '˥˧'
-            else:
-                out_str += '˧˩'
-        else:  # tone == 2; 上声
-            if qzh(onset_index) != 3:
-                out_str += '˧˥'
-            else:
-                out_str += '˩˧'
-        if onset['_zu'][onset_index] == '帮':  # remove medial "u" after bilabial consonant
-            def replace_medial(string, old, new, end=2):
-                return string[:end].replace(old, new) + string[end:]
-            out_str = replace_medial(out_str, 'w', '')
-            out_str = replace_medial(out_str, 'ɥ', 'j')
-            out_str = replace_medial(out_str, 'u̯', '', 3)
-        # remove redundant "j" (以母)
+        # INITIALS
+        # for division I, replace 见 series initials with uvulars
+        if out_type == 'unt' and rhyme['_deng'][rhyme_index] == '一':
+            initials_from = 'kɡŋhɦ'
+            initials_to = 'qɢɴχʁ'
+            i = initials_from.find(out_str[0])
+            if i >= 0:
+                out_str = replace_in_head(out_str, initials_from[i], initials_to[i], 1)
+
+        # FINALS
+        # set 蒸 rhyme to division III type A after 精 and 章 groups initials
+        if rhyme['_yun'][rhyme_index] == '蒸' and \
+                (onset['_zu'][onset_index] in '精章' or onset['zimu'][onset_index] in '以日'):
+            out_str = out_str.replace('ɻ', '')
+        # set 谆 and 清 rhyme to division III type B after 知 and 庄 groups initials
+        if rhyme['_yun'][rhyme_index] in '谆清' and onset['_zu'][onset_index] in '知庄':
+            out_str = out_str.replace('j', 'ɻj')
+            out_str = out_str.replace('ɥ', 'ɻɥ')
+        # remove [ᵊ] in 侯 rhyme after 帮 group initials
+        if onset['_zu'][onset_index] == '帮':
+            out_str = out_str.replace('ᵊ', '')
+
+        # MEDIALS
+        # modify medials after 帮 group initials
+        if onset['_zu'][onset_index] == '帮':
+            # 2019 version:
+            if 'ɥ̈' not in out_str:
+                out_str = replace_in_head(out_str, 'ɥ', 'j', 2)
+            out_str = replace_in_head(out_str, 'ẅ', 'ɥ̈', 3)
+            out_str = replace_in_head(out_str, 'j̈', 'ɥ̈', 3)
+            if out_str[1] == 'ɨ':
+                out_str = replace_in_head(out_str, 'ɨ', 'ɥ̈ɨ', 2)
+            out_str = replace_in_head(out_str, 'w', '', 2)
+            # 2016 version:
+            out_str = replace_in_head(out_str, 'u̯', '', 3)
+        # for division II, write the medial as [ɻw] after 知 and 庄 groups initials
+        if rhyme['_deng'][rhyme_index] == '二' and onset['_zu'][onset_index] in '知庄':
+            out_str = out_str.replace('wɻ', 'ɻw')
+        # remove redundant [j] (以 initial)
         if ('jj̈' not in out_str) and ('jɥ̈' not in out_str):
             out_str = out_str.replace('jj', 'j')
             out_str = out_str.replace('jɥ', 'ɥ')
-        # add "j̈" (云母) before /ɨ/
-        if out_str[0] == 'ɨ':
+        # add [j̈] (云 initial) before [ɨ] (and [i], only 真 rhyme)
+        if out_str[0] in 'ɨi':
             out_str = 'j̈' + out_str
-        # set 蒸韵 to class III A after 精 and 章 group
-        if (onset['_zu'][onset_index] == '精' or
-                onset['_zu'][onset_index] == '章' or
-                onset['zimu'][onset_index] == '以') and rhyme['_yun'][rhyme_index] == '蒸':
-            out_str = out_str.replace('ɻ', '')
+
+        # TONES
+        # for tone 4, replace nasal codas with stops
+        if tone == 4:
+            if out_str[-2:] == 'ŋʷ':
+                out_str = out_str[0:-2] + 'kʷ'
+            else:
+                codas_from = 'mnɲŋ'
+                codas_to = 'ptck'
+                i = codas_from.find(out_str[-1])
+                if i >= 0:
+                    out_str = out_str[0:-1] + codas_to[i]
+                else:
+                    error_fourth_tone(word)
+        # add tone letters
+        tone_letter_index = (tone - 1) * 2
+        # use dark (阳) tone for 浊平, 全浊上, 浊去, and 全浊入
+        if ((tone == 1 or tone == 3) and qzh(onset_index) >= 3) or \
+                ((tone == 2 or tone == 4) and qzh(onset_index) == 3):
+            tone_letter_index += 1
+        out_str += tone_letters[out_type][tone_letter_index]
     elif out_type == 'poly':
         # 1. 含r之声母（知组与庄组）及二等韵（以r起始）相拼时省去一r
         out_str = out_str.replace('rr', 'r')
