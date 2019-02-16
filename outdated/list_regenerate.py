@@ -28,6 +28,6 @@ def write_list(file, english_name, chinese_name):
 
 
 f = open('lists.py', 'w', encoding='utf_8')
-write_list(f, 'onset', '声母')
-write_list(f, 'rhyme', '韵母')
+write_list(f, 'initials', '声母')
+write_list(f, 'finals', '韵母')
 f.close()

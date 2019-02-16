@@ -4,7 +4,7 @@
 import sys
 from act_functions import act, print_logo
 
-DEFAULT_IN_TYPE = 'zimu'
+DEFAULT_IN_TYPE = 'trad'
 DEFAULT_OUT_TYPE = 'unt'
 OUTPUT_FILE_NAME = 'output.txt'
 
@@ -21,17 +21,16 @@ if argc <= 1:
     if out_type == '':
         print('>> ' + DEFAULT_OUT_TYPE)
         out_type = DEFAULT_OUT_TYPE
-    file_name = input('Read input from keyboard (press enter) or from file (input file name)?:\n>> ')
-    if file_name == '':
+    in_str = input('To read input from file, press enter; to read from keyboard, input now:\n>> ')
+    if in_str != '':
         while True:
-            in_str = input('Input (press enter to exit):\n>> ')
             if in_str == '':
                 break
-            print('Output:')
-            print('>> ' + act(in_str, in_type, out_type))
+            print('Output:\n>> ' + act(in_str, in_type, out_type))
+            in_str = input('Input (press enter to exit):\n>> ')
     else:
-        with open(file_name, 'r') as f1:
-            with open(OUTPUT_FILE_NAME, 'w', encoding='utf_16') as f2:
+        with open(input('Input file name:\n>> '), 'r') as f1:
+            with open(OUTPUT_FILE_NAME, 'w', encoding='utf-8') as f2:
                 for line in f1.readlines():
                     output = act(line, in_type, out_type)
                     print(line + output)

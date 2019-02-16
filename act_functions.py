@@ -1,8 +1,4 @@
-def replace_in_head(string, old, new, head_len):
-    return string[:head_len].replace(old, new) + string[head_len:]
-
-
-def read_file(file_name):
+def read_csv(file_name):
     result = {}
     with open(file_name, 'r', encoding='utf-8-sig') as f:
         lines = [line.rstrip(',').split(',') for line in f.readlines()]
@@ -12,9 +8,9 @@ def read_file(file_name):
 
 
 # 声母
-onset = read_file('list_initials.csv')
+initials = read_csv('list_initials.csv')
 # 韵母
-rhyme = read_file('list_finals.csv')
+finals = read_csv('list_finals.csv')
 # IPA tone letters
 # order: 阴平, 阳平, 阴上, 阳上, 阴去, 阳去, 阴入, 阳入
 tone_letters = {
@@ -23,12 +19,26 @@ tone_letters = {
 }
 
 
+# Error Messages
+ERROR_INITIAL_NOT_FOUND = 'The initial of "{}" cannot be found in the list!'
+ERROR_FINAL_NOT_FOUND = 'The final of "{}" cannot be found in the list!'
+ERROR_TONE_NOT_FOUND = 'The description "{}" contains no tone! Tone 1 (平声) is set.'
+ERROR_TONE_4 = 'The rhyme of "{}" is not a tone-4 rhyme but it has tone 4!'
+
+
+def error(error_type, *args):
+    print('Error: ' + error_type.format(*args))
+
+
+def replace_in_head(string, old, new, head_len):
+    return string[:head_len].replace(old, new) + string[head_len:]
+
+
 # Convert variant characters (异体字) to its index (row no.)
-# simplified character is in column 'zimu'
-# variant characters are in column '_vari'
-# the parameter in_type is just a syntactic sugar
+# simplified character is in column 'trad'
+# variant characters are in column '_var'
 def vari2index(in_str, list_name):
-    index = [list_name['_vari'].index(vari) for vari in list_name['_vari'] if in_str in vari]
+    index = [list_name['_var'].index(var) for var in list_name['_var'] if in_str in var]
     if len(index) == 0:
         return -1
     return index[0]
@@ -38,51 +48,49 @@ def str2index(in_str, in_type, list_name):
     if in_str in list_name[in_type]:
         return list_name[in_type].index(in_str)
 
-    # if not, the input string may be a variant zimu or a complex zimu
-    if in_type == 'zimu':
-        if list_name == onset:
+    # if not, the input string may be a variant trad or a complex trad
+    if in_type == 'trad':
+        if list_name == initials:
             return vari2index(in_str, list_name)
 
-        # for rhyme
-        # get and remove deng-hu (等呼)
-        deng = ''
+        # for rhyme, get and remove division (等) and rounding (呼)
+        division = ''
         chongniu = ''
-        hu = ''
-        if '一' in in_str:  # 1st deng
-            deng = '一'
-        elif '二' in in_str:  # 2nd deng
-            deng = '二'
-        elif '三' in in_str:  # 3rd deng
-            deng = '三'
-            if 'A' in in_str or 'a' in in_str:  # 3a deng
-                chongniu = 'A'
-            elif 'B' in in_str or 'b' in in_str:  # 3b deng
-                chongniu = 'B'
-        elif '四' in in_str:  # 4th deng
-            deng = '四'
-        if '开' in in_str or '開' in in_str:  # unrounded (开口)
-            hu = '开'
-        elif '合' in in_str:  # rounded (合口)
-            hu = '合'
+        rounding = ''
+        # division I, II, III, and IV
+        for div in '一二三四':
+            if div in in_str:
+                division = div
+                break
+        # division III type A or B
+        if 'A' in in_str or 'a' in in_str:
+            chongniu = 'A'
+        elif 'B' in in_str or 'b' in in_str:
+            chongniu = 'B'
+        # open mouth (开口) or closed mouth (合口)
+        if '开' in in_str or '開' in in_str:
+            rounding = '开'
+        elif '合' in in_str:
+            rounding = '合'
         in_str = in_str.strip('一二三四AaBb开開合口')
 
         if len(in_str) != 1:
             return -1
-        if in_str in list_name['_yun']:
-            first_index = list_name['_yun'].index(in_str)
+        if in_str in list_name['_rhyme']:
+            first_index = list_name['_rhyme'].index(in_str)
         else:
             first_index = vari2index(in_str, list_name)
-        if first_index == -1 or list_name['_overlap'][first_index] == '':
+        if first_index == -1 or list_name['_multi'][first_index] == '':
             return first_index
 
         iter_index = first_index
-        while list_name['_yun'][iter_index] == list_name['_yun'][first_index]:
+        while list_name['_rhyme'][iter_index] == list_name['_rhyme'][first_index]:
             found = True
-            if 'd' in list_name['_overlap'][iter_index] and deng not in list_name['_deng'][iter_index]:
+            if 'd' in list_name['_multi'][iter_index] and division not in list_name['_div'][iter_index]:
                 found = False
-            if 'c' in list_name['_overlap'][iter_index] and chongniu not in list_name['_deng'][iter_index]:
+            if 'c' in list_name['_multi'][iter_index] and chongniu not in list_name['_div'][iter_index]:
                 found = False
-            if 'h' in list_name['_overlap'][iter_index] and hu != list_name['_hu'][iter_index]:
+            if 'r' in list_name['_multi'][iter_index] and rounding != list_name['_round'][iter_index]:
                 found = False
             if found:
                 return iter_index
@@ -99,65 +107,65 @@ def index2str(index, out_type, list_name):
     return list_name[out_type][index]
 
 
-# Return the voicing (清浊/qingzhuo) of given onset index
-def qzh(index):
-    if onset['_qzh'][index] == '全清':
-        return 1
-    if onset['_qzh'][index] == '次清':
-        return 2
-    if onset['_qzh'][index] == '全浊':
-        return 3
-    return 4  # '次浊'
+# Return the voicing (清浊) of given initial index
+def get_voicing(index):
+    return 1 + ['全清', '次清', '全浊', '次浊'].index(initials['_voice'][index])
 
 
-def error(message):
-    print('Error: ' + message)
-
-
-def error_fourth_tone(word):
-    error('The rhyme of "' + word + '" is not a 4th-tone rhyme but its tone is the 4th!')
+# Convert nasal coda to stop coda
+def coda_nasal2stop(rhyme, word):
+    if rhyme[-2:] == 'ng':
+        rhyme = rhyme[0:-2] + 'k'
+    elif rhyme[-2:] == 'ŋʷ':
+        rhyme = rhyme[0:-2] + 'kʷ'
+    else:
+        codas_from = 'mnɲŋ'
+        codas_to = 'ptck'
+        i = codas_from.find(rhyme[-1])
+        if i >= 0:
+            rhyme = rhyme[0:-1] + codas_to[i]
+        else:
+            error(ERROR_TONE_4, word)
+    return rhyme
 
 
 def convert_input(word, in_type):
-    # analyze the input string and split it into 3 parts: onset, rhyme and tone
+    # analyze the input string and split it into 3 parts: initial, final and tone
     in_onset = ''
     in_rhyme = ''
     tone = 0
-    if in_type == 'zimu':
+    if in_type == 'trad':
         in_onset = word[0]
         in_rhyme = word[1:]
-        # get and remove the tone (调/diao)
-        if '平' in in_rhyme:  # 1st tone (平声/pingsheng) appears most
-            tone = 1
-        elif '入' in in_rhyme:  # 4th tone (入声/rusheng)
-            tone = 4
-        elif '去' in in_rhyme:  # 3rd tone (去声/qusheng)
-            tone = 3
-        elif '上' in in_rhyme:  # 2nd tone (上声/shangsheng)
-            tone = 2
+        # get and remove the tone (调)
+        tones = '平上去入'
+        for i in range(len(tones)):
+            if tones[i] in in_rhyme:
+                tone = i + 1
+                break
         in_rhyme = in_rhyme.strip('平上赏賞去入声聲调調')
-    onset_index = str2index(in_onset, in_type, onset)
+    onset_index = str2index(in_onset, in_type, initials)
     if onset_index < 0:
-        error('The onset "' + word[0] + '" cannot be found in the list! (code: ' + str(onset_index) + ')')
-    rhyme_index = str2index(in_rhyme, in_type, rhyme)
+        error(ERROR_INITIAL_NOT_FOUND, word)
+    rhyme_index = str2index(in_rhyme, in_type, finals)
     if rhyme_index < 0:
-        error('The rhyme "' + in_rhyme + '" cannot be found in the list! (code: ' + str(rhyme_index) + ')')
+        error(ERROR_FINAL_NOT_FOUND, word)
     if tone == 0:
-        error('The description "' + word + '" contains no tone! 1st tone (平声) is set.')
+        error(ERROR_TONE_NOT_FOUND, word)
         tone = 1
-    # complex rhyme search needed occasion
+    # complex final search needed occasion
 
     return onset_index, rhyme_index, tone
 
 
 def convert_output(onset_index, rhyme_index, tone, out_type, word):
-    out_onset = index2str(onset_index, out_type, onset)
-    out_rhyme = index2str(rhyme_index, out_type, rhyme)
+    out_onset = index2str(onset_index, out_type, initials)
+    out_rhyme = index2str(rhyme_index, out_type, finals)
     out_str = out_onset + out_rhyme
     if out_type == 'unt' or out_type == 'untF':
         # INITIALS
         # for division I, replace 见 series initials with uvulars
-        if out_type == 'unt' and rhyme['_deng'][rhyme_index] == '一':
+        if out_type == 'unt' and finals['_div'][rhyme_index] == '一':
             initials_from = 'kɡŋhɦ'
             initials_to = 'qɢɴχʁ'
             i = initials_from.find(out_str[0])
@@ -166,20 +174,20 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
 
         # FINALS
         # set 蒸 rhyme to division III type A after 精 and 章 groups initials
-        if rhyme['_yun'][rhyme_index] == '蒸' and \
-                (onset['_zu'][onset_index] in '精章' or onset['zimu'][onset_index] in '以日'):
+        if finals['_rhyme'][rhyme_index] == '蒸' and \
+                (initials['_group'][onset_index] in '精章' or initials['trad'][onset_index] in '以日'):
             out_str = out_str.replace('ɻ', '')
         # set 谆 and 清 rhyme to division III type B after 知 and 庄 groups initials
-        if rhyme['_yun'][rhyme_index] in '谆清' and onset['_zu'][onset_index] in '知庄':
+        if finals['_rhyme'][rhyme_index] in '谆清' and initials['_group'][onset_index] in '知庄':
             out_str = out_str.replace('j', 'ɻj')
             out_str = out_str.replace('ɥ', 'ɻɥ')
         # remove [ᵊ] in 侯 rhyme after 帮 group initials
-        if onset['_zu'][onset_index] == '帮':
+        if initials['_group'][onset_index] == '帮':
             out_str = out_str.replace('ᵊ', '')
 
         # MEDIALS
         # modify medials after 帮 group initials
-        if onset['_zu'][onset_index] == '帮':
+        if initials['_group'][onset_index] == '帮':
             # 2019 version:
             if 'ɥ̈' not in out_str:
                 out_str = replace_in_head(out_str, 'ɥ', 'j', 2)
@@ -191,7 +199,7 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
             # 2016 version:
             out_str = replace_in_head(out_str, 'u̯', '', 3)
         # for division II, write the medial as [ɻw] after 知 and 庄 groups initials
-        if rhyme['_deng'][rhyme_index] == '二' and onset['_zu'][onset_index] in '知庄':
+        if finals['_div'][rhyme_index] == '二' and initials['_group'][onset_index] in '知庄':
             out_str = out_str.replace('wɻ', 'ɻw')
         # remove redundant [j] (以 initial)
         if ('jj̈' not in out_str) and ('jɥ̈' not in out_str):
@@ -204,21 +212,12 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
         # TONES
         # for tone 4, replace nasal codas with stops
         if tone == 4:
-            if out_str[-2:] == 'ŋʷ':
-                out_str = out_str[0:-2] + 'kʷ'
-            else:
-                codas_from = 'mnɲŋ'
-                codas_to = 'ptck'
-                i = codas_from.find(out_str[-1])
-                if i >= 0:
-                    out_str = out_str[0:-1] + codas_to[i]
-                else:
-                    error_fourth_tone(word)
+            out_str = coda_nasal2stop(out_str, word)
         # add tone letters
         tone_letter_index = (tone - 1) * 2
         # use dark (阳) tone for 浊平, 全浊上, 浊去, and 全浊入
-        if ((tone == 1 or tone == 3) and qzh(onset_index) >= 3) or \
-                ((tone == 2 or tone == 4) and qzh(onset_index) == 3):
+        if ((tone == 1 or tone == 3) and get_voicing(onset_index) >= 3) or \
+                ((tone == 2 or tone == 4) and get_voicing(onset_index) == 3):
             tone_letter_index += 1
         out_str += tone_letters[out_type][tone_letter_index]
     elif out_type == 'poly':
@@ -226,43 +225,35 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
         out_str = out_str.replace('rr', 'r')
 
         # 2. 唇牙喉音声母之重纽A类（即重纽四等，含谆韵）于声、韵母间加一j
-        if ('A' in rhyme['zimu'][rhyme_index] or rhyme['zimu'][rhyme_index] == '臻') \
-                and (onset['_zu'][onset_index] in ['帮', '见'] or out_onset in ['h', 'qh']):
+        if ('A' in finals['trad'][rhyme_index] or finals['trad'][rhyme_index] == '臻') \
+                and (initials['_group'][onset_index] in ['帮', '见'] or out_onset in ['h', 'qh']):
             out_str = out_onset + 'j' + out_rhyme
 
         # 3. j与开口三等韵相拼时，除脂ii、之i、真in、蒸ing、侵im五韵外，j后面之i应省去
-        if rhyme['_yun'][rhyme_index] not in ['脂', '之', '真', '蒸', '侵']:
+        if finals['_rhyme'][rhyme_index] not in ['脂', '之', '真', '蒸', '侵']:
             out_str = out_str.replace('ji', 'j')
 
         # 5. 若声母与韵母搭配不正常（一般为三等与非三等搭配问题），可以'分隔声韵母
-        if onset['_zu'][onset_index] in ['章', '以', '日'] and out_rhyme[0] not in ['i', 'y', 'j']:
+        if initials['_group'][onset_index] in ['章', '以', '日'] and out_rhyme[0] not in ['i', 'y', 'j']:
             out_str = out_onset + "'" + out_rhyme
 
         # convert tone
-        if tone != 1:
-            if tone == 4:  # 入声
-                if out_str[-2:] == 'ng':
-                    out_str = out_str[0:-2] + 'k'
-                elif out_str[-1] == 'n':
-                    out_str = out_str[0:-1] + 't'
-                elif out_str[-1] == 'm':
-                    out_str = out_str[0:-1] + 'p'
-                # else:
-                #    print('Error')
-            elif tone == 3:  # 去声
-                if out_str[-1] != 'd':
-                    out_str += 'h'
-            else:  # tone == 2; 上声
-                out_str += 'x'
+        if tone == 2:
+            out_str += 'x'
+        elif tone == 3:
+            if out_str[-1] != 'd':
+                out_str += 'h'
+        elif tone == 4:
+            out_str = coda_nasal2stop(out_str, word)
     elif out_type == 'bax' or out_type == 'bax1':
         # After labial initials, there is no contrast between -an, -at, -a and -wan, -wat, -wa
-        if onset['_zu'][onset_index] == '帮' and rhyme['_yun'][rhyme_index] in '废桓戈阳':
+        if initials['_group'][onset_index] == '帮' and finals['_rhyme'][rhyme_index] in '废桓戈阳':
             out_str = out_str.replace('w', '')
 
         # [chongniu] is limited to syllables with grave initials
-        if onset['_zu'][onset_index] not in '帮见影' \
-                and ('c' in rhyme['_overlap'][rhyme_index] or rhyme['_yun'][rhyme_index] == '清'):
-            if rhyme['_yun'][rhyme_index] in '脂真諄侵':
+        if initials['_group'][onset_index] not in '帮见影' \
+                and ('c' in finals['_multi'][rhyme_index] or finals['_rhyme'][rhyme_index] == '清'):
+            if finals['_rhyme'][rhyme_index] in '脂真諄侵':
                 out_str = out_str.replace('ji', 'i')
                 out_str = out_str.replace('jwi', 'wi')
             else:
@@ -274,23 +265,16 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
             out_str = out_str.replace('yhj', 'yh')
 
         # convert tone
-        if tone != 1:
-            if tone == 4:  # 入声
-                if out_str[-2:] == 'ng':
-                    out_str = out_str[0:-2] + 'k'
-                elif out_str[-1] == 'n':
-                    out_str = out_str[0:-1] + 't'
-                elif out_str[-1] == 'm':
-                    out_str = out_str[0:-1] + 'p'
-                # else:
-                #    print('Error')
-            elif tone == 3:  # 去声
-                out_str += 'H'
-            else:  # tone == 2; 上声
-                out_str += 'X'
+        if tone == 2:
+            out_str += 'X'
+        elif tone == 3:
+            out_str += 'H'
+        elif tone == 4:
+            out_str = coda_nasal2stop(out_str, word)
+
         if out_type == 'bax1':
             out_str = out_str.replace('\'', 'ʔ')
-            if rhyme['_yun'][rhyme_index] == '佳':
+            if finals['_rhyme'][rhyme_index] == '佳':
                 out_str = out_str.replace('ea', 'ɛɨ')
             out_str = out_str.replace('+', 'ɨ')
             out_str = out_str.replace('ae', 'æ')
