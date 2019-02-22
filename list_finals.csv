@@ -12,14 +12,14 @@
 ,6,脂A合,止,脂,三A,合,cr,,jwij,yi,üī,jwi,ui,ɥi,u̯i,ʷi
 ,6,脂B开,止,脂,三B,开,cr,,ij,ii,ïī,i,ɨi,ɻi,ɨ̯i,ʴi
 ,6,脂B合,止,脂,三B,合,cr,,wij,yi,ïüī,wi,uɨi,ɻɥi,u̯ɨ̯i,ʴʷi
-,7,之,止,之,三,,,止志,ij,i,ï̄,ɨ,ɨ,ɨ,ɨ,ɯ
+,7,之,止,之,三,,,止志,i,i,ï̄,ɨ,ɨ,ɨ,ɨ,ɯ
 ,8,微开,止,微,三,开,r,尾未,j+j,ioi,ï̄i,ɨj,ɨəi,ɨj,ɨi̯,ɯi
 ,8,微合,止,微,三,合,r,,jw+j,yoi,uï̄i,wɨj,uɨəi,ẅɨj,u̯ɨi̯,ui
 1,9,鱼,遇,鱼,三,,,魚语語御,jo,io,ië̄,ö,ɨo,j̈ə,i̯ə,ɯɤ
 ,10,虞,遇,虞,三,,,麌遇,ju,yo,iō,o,uɨo,ẅo͡ɔ,i̯ɔ,uo
 ,11,模,遇,模,一,,,姥暮,u,o,ō,ü,uo,u͡o,o,o
-1,12,齐开,蟹,齐,四,,,齊荠薺霁霽,ej,e,ēi,iej,ɛi,ej,ei̯,ɛi
-,12,齐合,蟹,齐,四,,,,wej,ue,uēi,wiej,,wej,u̯ei̯,ʷɛi
+1,12,齐开,蟹,齐,四,开,r,齊荠薺霁霽,ej,e,ēi,iej,ɛi,ej,ei̯,ɛi
+,12,齐合,蟹,齐,四,合,r,,wej,ue,uēi,wiej,,wej,u̯ei̯,ʷɛi
 ,,祭A开,蟹,祭,三A,开,cr,,jiej,ied,ièś,jej,iɛi,jɛjɕ,i̯ɛɕ,iɛi
 ,,祭A合,蟹,祭,三A,合,cr,,jwiej,yed,üèś,jwej,uiɛi,ɥɛjɕ,u̯i̯ɛɕ,ʴʷiɛi
 ,,祭B开,蟹,祭,三B,开,cr,,jej,ied,ïièś,ej,ɨɛi,ɻjɛjɕ,ɨ̯i̯ɛɕ,iɛi
@@ -36,7 +36,7 @@
 ,15,灰,蟹,灰,一,,,贿賄隊队,woj,uai,uōi,oj,uəi,wɔ̞j,u̯ɒi̯,ʷɔi
 ,,废开,蟹,废,三,开,r,废廢,joj,iad,iềś,əj,ɨɐi,j̈əjɕ,i̯əɕ,ɯʌi
 ,,废合,蟹,废,三,合,r,,jwoj,yad,üềś,wəj,uɨɐi,ẅəjɕ,u̯i̯əɕ,uɔi
-1,17,真A,臻,真,三A,,c,眞轸軫震质質,jin,in,īn,jin,in,in,in,in
+1,17,真A,臻,真,三A,开,cr,眞轸軫震质質,jin,in,īn,jin,in,in,in,in
 ,17,真B开,臻,真,三B,开,cr,,in,in,ïīn,in,ɨin,ɻin,ɨ̯in,ʴin
 ,17,真B合,臻,真,三B,合,cr,,win,yn,ïüīn,win,uɨin,ɻɥin,u̯ɨ̯in,ʴʷin
 ,18,谆,臻,谆,三,,,諄准準稕术術[真眞],jwin,yn,üīn,win,uin,ɥin,u̯in,ʷin

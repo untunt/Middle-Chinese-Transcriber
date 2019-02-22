@@ -83,11 +83,17 @@ def str2index(in_str, in_type, list_name):
         if first_index == -1 or list_name['_multi'][first_index] == '':
             return first_index
 
+        # 真 rhyme rounded has only type B
+        if list_name['_rhyme'][first_index] == '真' and rounding == '合' and chongniu == '':
+            chongniu = 'B'
+
         iter_index = first_index
         while list_name['_rhyme'][iter_index] == list_name['_rhyme'][first_index]:
             found = True
-            if 'd' in list_name['_multi'][iter_index] and division not in list_name['_div'][iter_index]:
+            if 'd' in list_name['_multi'][iter_index] and \
+                    (division == '' or division not in list_name['_div'][iter_index]):
                 found = False
+            # if chongniu == '', type A is set as default (except for 真 rhyme rounded)
             if 'c' in list_name['_multi'][iter_index] and chongniu not in list_name['_div'][iter_index]:
                 found = False
             if 'r' in list_name['_multi'][iter_index] and rounding != list_name['_round'][iter_index]:
@@ -246,14 +252,16 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
         elif tone == 4:
             out_str = coda_nasal2stop(out_str, word)
     elif out_type == 'bax' or out_type == 'bax1':
-        # After labial initials, there is no contrast between -an, -at, -a and -wan, -wat, -wa
-        if initials['_group'][onset_index] == '帮' and finals['_rhyme'][rhyme_index] in '废桓戈阳':
+        # after 帮 group, there is no contrast between -an, -at, -a and -wan, -wat, -wa
+        # and generally remove 'w' after 帮 group when the rhyme has both rounded and unrounded finals
+        if initials['_group'][onset_index] == '帮' and (finals['_rhyme'][rhyme_index] in '废桓戈阳' or
+                                                       'r' in finals['_multi'][rhyme_index]):
             out_str = out_str.replace('w', '')
 
         # [chongniu] is limited to syllables with grave initials
-        if initials['_group'][onset_index] not in '帮见影' \
-                and ('c' in finals['_multi'][rhyme_index] or finals['_rhyme'][rhyme_index] == '清'):
-            if finals['_rhyme'][rhyme_index] in '脂真諄侵':
+        if (initials['_group'][onset_index] not in '帮见影' or initials['trad'][onset_index] == '云') \
+                and ('c' in finals['_multi'][rhyme_index] or finals['_rhyme'][rhyme_index] in '谆清'):
+            if finals['_rhyme'][rhyme_index] in '脂真谆侵':
                 out_str = out_str.replace('ji', 'i')
                 out_str = out_str.replace('jwi', 'wi')
             else:
