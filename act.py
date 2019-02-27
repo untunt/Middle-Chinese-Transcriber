@@ -6,7 +6,8 @@ from act_functions import act, print_logo
 
 DEFAULT_IN_TYPE = 'trad'
 DEFAULT_OUT_TYPE = 'unt'
-OUTPUT_FILE_NAME = 'output.txt'
+DEFAULT_IN_FILENAME = 'input.txt'
+DEFAULT_OUT_FILENAME = 'output.txt'
 
 print_logo()
 
@@ -29,13 +30,17 @@ if argc <= 1:
             print('Output:\n>> ' + act(in_str, in_type, out_type))
             in_str = input('Input (press enter to exit):\n>> ')
     else:
-        with open(input('Input file name:\n>> '), 'r') as f1:
-            with open(OUTPUT_FILE_NAME, 'w', encoding='utf-8') as f2:
+        in_filename = input('Input file name (default: ' + DEFAULT_IN_FILENAME + ', press enter to use):\n>> ')
+        if in_filename == '':
+            print('>> ' + DEFAULT_IN_FILENAME)
+            in_filename = DEFAULT_IN_FILENAME
+        with open(in_filename, 'r') as f1:
+            with open(DEFAULT_OUT_FILENAME, 'w', encoding='utf-8') as f2:
                 for line in f1.readlines():
                     output = act(line, in_type, out_type)
-                    print(line + output)
+                    # print(line + output)
                     f2.write(output + '\n')
-        print('\nSaved as ' + OUTPUT_FILE_NAME)
+        print('\nSaved as ' + DEFAULT_OUT_FILENAME)
 
 else:
     in_type = DEFAULT_IN_TYPE
