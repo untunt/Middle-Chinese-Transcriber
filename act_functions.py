@@ -228,8 +228,8 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
         out_str = out_str.replace('rr', 'r')
 
         # 2. 唇牙喉音声母之重纽A类（即重纽四等，含谆韵）于声、韵母间加一j
-        if ('A' in finals['trad'][rhyme_index] or finals['trad'][rhyme_index] == '臻') \
-                and (initials['_group'][onset_index] in ['帮', '见'] or out_onset in ['h', 'qh']):
+        if ('A' in finals['trad'][rhyme_index] or finals['_rhyme'][rhyme_index] in '臻谆清') \
+                and (initials['_group'][onset_index] in '帮见' or out_onset in ['h', 'q']):
             out_str = out_onset + 'j' + out_rhyme
 
         # 3. j与开口三等韵相拼时，除脂ii、之i、真in、蒸ing、侵im五韵外，j后面之i应省去
