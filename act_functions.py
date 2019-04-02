@@ -170,8 +170,8 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
     out_str = out_onset + out_rhyme
     if out_type == 'unt' or out_type == 'untF':
         # INITIALS
-        # for division I, replace 见 series initials with uvulars
-        if out_type == 'unt' and finals['_div'][rhyme_index] == '一':
+        # for division non-III, replace 见 series initials with uvulars
+        if out_type == 'unt' and finals['_div'][rhyme_index] != '三':
             initials_from = 'kɡŋhɦ'
             initials_to = 'qɢɴχʁ'
             i = initials_from.find(out_str[0])
@@ -187,9 +187,6 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
         if finals['_rhyme'][rhyme_index] in '谆清' and initials['_group'][onset_index] in '知庄':
             out_str = out_str.replace('j', 'ɻj')
             out_str = out_str.replace('ɥ', 'ɻɥ')
-        # remove [ᵊ] in 侯 rhyme after 帮 group initials
-        if initials['_group'][onset_index] == '帮':
-            out_str = out_str.replace('ᵊ', '')
 
         # MEDIALS
         # modify medials after 帮 group initials

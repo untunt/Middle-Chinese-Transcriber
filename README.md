@@ -12,7 +12,7 @@ unt 的中古音韵转写器
 |`poly`|[Polyhedron's romanization of MC](https://zh.wikipedia.org/wiki/User:Polyhedron/%E4%B8%AD%E5%8F%A4%E6%BC%A2%E8%AA%9E%E6%8B%BC%E9%9F%B3 "中古汉语拼音")<br>Polyhedron 的中古汉语拼音|I: 2018.3.20<br>Fo: 2018.4.29|
 |`hxs`|Xiaoshan Huang's reconstruction of EMC<br>黄笑山的早期中古汉语构拟<br>Ref.: 黄笑山《〈切韻〉和中唐五代音位系統》|F: Unfinished|
 |`msoeg`|[msoeg's reconstruction of MC](https://zhuanlan.zhihu.com/p/23576833 "【汉语音韵学笔记】中古汉语")<br>msoeg 的中古汉语构拟|F: Unfinished|
-|`unt`|unt's reading pronunciation of *Qieyun* (2019 version)<br>unt 切韵朗读音（2019 版）|IFo: 2019.2.14|
+|`unt`|[unt's reading pronunciation of *Qieyun*](https://zhuanlan.zhihu.com/p/58227457 "unt 切韵朗读音：早期中古汉语的一种可读实现") (2019 version)<br>unt 切韵朗读音（2019 版）|IFo: 2019.2.14|
 |`untF`|unt's reconstruction of MC (2016 version)<br>unt 的中古汉语构拟（2016 版）|I: 2018.3.31|
 |`yugan`|unt's General Romanization (private use)<br>unt 的通用拼音（私用）|I: 2018.3.31|
 |`yugun`|unt's General Romanization, without combining diacritics<br>unt 的通用拼音，不使用组合符号|I: 2018.3.31|
