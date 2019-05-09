@@ -171,7 +171,7 @@ def convert_output(onset_index, rhyme_index, tone, out_type, word):
     if out_type == 'unt' or out_type == 'untF':
         # INITIALS
         # for division non-III, replace 见 series initials with uvulars
-        if out_type == 'unt' and finals['_div'][rhyme_index] != '三':
+        if out_type == 'unt' and '三' not in finals['_div'][rhyme_index]:
             initials_from = 'kɡŋhɦ'
             initials_to = 'qɢɴχʁ'
             i = initials_from.find(out_str[0])
