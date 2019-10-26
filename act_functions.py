@@ -182,7 +182,7 @@ def convert_output(initial_index, final_index, tone, out_type, word):
         # FINALS
         # set 蒸 rhyme to division III type A after 精 and 章 groups initials
         if finals['_rhyme'][final_index] == '蒸' and \
-                (initials['_group'][initial_index] in '精章' or initials['trad'][initial_index] in '以日'):
+                (initials['_group'][initial_index] in '精章' or initials['trad'][initial_index] in '以来日'):
             out_str = out_str.replace('ɻ', '')
         # set 谆 and 清 rhyme to division III type B after 知 and 庄 groups initials
         if finals['_rhyme'][final_index] in '谆清' and initials['_group'][initial_index] in '知庄':
