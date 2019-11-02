@@ -185,7 +185,8 @@ def convert_output(initial_index, final_index, tone, out_type, word):
                 (initials['_group'][initial_index] in '精章' or initials['trad'][initial_index] in '以来日'):
             out_str = out_str.replace('ɻ', '')
         # set 谆 and 清 rhyme to division III type B after 知 and 庄 groups initials
-        if finals['_rhyme'][final_index] in '谆清' and initials['_group'][initial_index] in '知庄':
+        if finals['_rhyme'][final_index] in '谆清' and \
+                (initials['_group'][initial_index] in '知庄' or initials['trad'][initial_index] in '云'):
             out_str = out_str.replace('j', 'ɻj')
             out_str = out_str.replace('ɥ', 'ɻɥ')
 
@@ -230,15 +231,17 @@ def convert_output(initial_index, final_index, tone, out_type, word):
 
         # 2. 唇牙喉音声母之重纽A类（即重纽四等，含谆韵）于声、韵母间加一j
         if ('A' in finals['trad'][final_index] or finals['_rhyme'][final_index] in '臻谆清') \
-                and (initials['_group'][initial_index] in '帮见' or out_initial in ['h', 'q']):
+                and (initials['_group'][initial_index] in '帮见' or out_initial in 'hq'):
             out_str = out_initial + 'j' + out_final
 
         # 3. j与开口三等韵相拼时，除脂ii、之i、真in、蒸ing、侵im五韵外，j后面之i应省去
-        if finals['_rhyme'][final_index] not in ['脂', '之', '真', '蒸', '侵']:
+        if finals['_rhyme'][final_index] not in '脂之真蒸侵':
             out_str = out_str.replace('ji', 'j')
 
         # 5. 若声母与韵母搭配不正常（一般为三等与非三等搭配问题），可以'分隔声韵母
-        if initials['_group'][initial_index] in ['章', '以', '日'] and out_final[0] not in ['i', 'y', 'j']:
+        if (initials['_group'][initial_index] in '章以日' and out_final[0] not in 'iyj') \
+                or (initials['_group'][initial_index] in '端精' and out_final[0] == 'r') \
+                or (initials['_group'][initial_index] in '知庄' and finals['_div'][final_index] in '一四'):
             out_str = out_initial + "'" + out_final
 
         # convert tone
@@ -252,7 +255,7 @@ def convert_output(initial_index, final_index, tone, out_type, word):
     elif out_type == 'bax' or out_type == 'bax1':
         # after 帮 group, there is no contrast between -an, -at, -a and -wan, -wat, -wa
         # and generally remove 'w' after 帮 group when the rhyme has both rounded and unrounded finals
-        if initials['_group'][initial_index] == '帮' and (finals['_rhyme'][final_index] in '废桓戈阳' or
+        if initials['_group'][initial_index] == '帮' and (finals['_rhyme'][final_index] in '桓戈' or
                                                          'r' in finals['_multi'][final_index]):
             out_str = out_str.replace('w', '')
 
