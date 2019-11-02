@@ -30,7 +30,8 @@ def error(error_type, *args):
     print('Error: ' + error_type.format(*args))
 
 
-def replace_in_head(string, old, new, head_len):
+def replace_in_head(string, old, new, head_len, extension):
+    head_len += extension
     return string[:head_len].replace(old, new) + string[head_len:]
 
 
@@ -44,7 +45,7 @@ def vari2index(in_str, list_name):
     return index[0]
 
 
-def str2index(in_str, in_type, list_name):
+def str2index(in_str, in_type, list_name, additional_params):
     if in_str in list_name[in_type]:
         return list_name[in_type].index(in_str)
 
@@ -52,6 +53,9 @@ def str2index(in_str, in_type, list_name):
     if in_type == 'trad':
         if list_name == initials:
             return vari2index(in_str, list_name)
+
+        initial_index = additional_params[0]
+        tone = additional_params[1]
 
         # for final, get and remove division (等) and rounding (呼)
         division = ''
@@ -75,6 +79,9 @@ def str2index(in_str, in_type, list_name):
         in_str = in_str.strip('一二三四AaBb开開合口')
 
         if len(in_str) != 1:
+            # for 覃 rhyme tone 4 (合 rhyme), '合' may have been stripped
+            if rounding == '合' and tone == 4:
+                return list_name['trad'].index('覃')
             return -1
         if in_str in list_name['_rhyme']:
             first_index = list_name['_rhyme'].index(in_str)
@@ -83,9 +90,12 @@ def str2index(in_str, in_type, list_name):
         if first_index == -1 or list_name['_multi'][first_index] == '':
             return first_index
 
-        # 真 rhyme rounded has only type B
+        # 真 rhyme closed mouth has only type B
         if list_name['_rhyme'][first_index] == '真' and rounding == '合' and chongniu == '':
             chongniu = 'B'
+        # 蒸 rhyme tone 1~3 has only open mouth
+        if list_name['_rhyme'][first_index] == '蒸' and tone < 4 and rounding == '':
+            rounding = '开'
 
         iter_index = first_index
         while list_name['_rhyme'][iter_index] == list_name['_rhyme'][first_index]:
@@ -93,8 +103,11 @@ def str2index(in_str, in_type, list_name):
             if 'd' in list_name['_multi'][iter_index] and \
                     (division == '' or division not in list_name['_div'][iter_index]):
                 found = False
-            # if chongniu == '', type A is set as default (except for 真 rhyme rounded)
             if 'c' in list_name['_multi'][iter_index] and chongniu not in list_name['_div'][iter_index]:
+                found = False
+            # for division III type A/B rhymes, set type B (reject type A) after 知, 庄 groups and 云 initial
+            if 'A' in list_name['_div'][iter_index] and \
+                    (initials['_group'][initial_index] in '知庄' or initials['trad'][initial_index] == '云'):
                 found = False
             if 'r' in list_name['_multi'][iter_index] and rounding != list_name['_round'][iter_index]:
                 found = False
@@ -151,16 +164,15 @@ def convert_input(word, in_type):
                 tone = i + 1
                 break
         in_final = in_final.strip('平上赏賞去入声聲调調')
-    initial_index = str2index(in_initial, in_type, initials)
+    initial_index = str2index(in_initial, in_type, initials, None)
     if initial_index < 0:
         error(ERROR_INITIAL_NOT_FOUND, word)
-    final_index = str2index(in_final, in_type, finals)
+    final_index = str2index(in_final, in_type, finals, (initial_index, tone))
     if final_index < 0:
         error(ERROR_FINAL_NOT_FOUND, word)
     if tone == 0:
         error(ERROR_TONE_NOT_FOUND, word)
         tone = 1
-    # complex final search needed occasion
 
     return initial_index, final_index, tone
 
@@ -177,7 +189,7 @@ def convert_output(initial_index, final_index, tone, out_type, word):
             initials_to = 'qɢɴχʁ'
             i = initials_from.find(out_str[0])
             if i >= 0:
-                out_str = replace_in_head(out_str, initials_from[i], initials_to[i], 1)
+                out_str = replace_in_head(out_str, initials_from[i], initials_to[i], 1, 0)
 
         # FINALS
         # set 蒸 rhyme to division III type A after 精 and 章 groups initials
@@ -193,16 +205,22 @@ def convert_output(initial_index, final_index, tone, out_type, word):
         # MEDIALS
         # modify medials after 帮 group initials
         if initials['_group'][initial_index] == '帮':
+            extension = 0
+            if initials['trad'][initial_index] == '滂':
+                extension = 1
             # 2019 version:
             if 'ɥ̈' not in out_str:
-                out_str = replace_in_head(out_str, 'ɥ', 'j', 2)
-            out_str = replace_in_head(out_str, 'ẅ', 'ɥ̈', 3)
-            out_str = replace_in_head(out_str, 'j̈', 'ɥ̈', 3)
+                out_str = replace_in_head(out_str, 'ɥ', 'j', 2, extension)
+            out_str = replace_in_head(out_str, 'ẅ', 'ɥ̈', 3, extension)
+            out_str = replace_in_head(out_str, 'j̈', 'ɥ̈', 3, extension)
             if out_str[1] == 'ɨ':
-                out_str = replace_in_head(out_str, 'ɨ', 'ɥ̈ɨ', 2)
-            out_str = replace_in_head(out_str, 'w', '', 2)
+                out_str = replace_in_head(out_str, 'ɨ', 'ɥ̈ɨ', 2, extension)
+            out_str = replace_in_head(out_str, 'w', '', 2, extension)
+            # 侯 final is [u] after 帮 group
+            if out_type == 'unt' and finals['_rhyme'][final_index] == '侯':
+                out_str = replace_in_head(out_str, 'ɘ', '', 2, extension)
             # 2016 version:
-            out_str = replace_in_head(out_str, 'u̯', '', 3)
+            out_str = replace_in_head(out_str, 'u̯', '', 3, extension)
         # for division II, write the medial as [ɻw] after 知 and 庄 groups initials
         if finals['_div'][final_index] == '二' and initials['_group'][initial_index] in '知庄':
             out_str = out_str.replace('wɻ', 'ɻw')
@@ -243,6 +261,9 @@ def convert_output(initial_index, final_index, tone, out_type, word):
                 or (initials['_group'][initial_index] in '端精' and out_final[0] == 'r') \
                 or (initials['_group'][initial_index] in '知庄' and finals['_div'][final_index] in '一四'):
             out_str = out_initial + "'" + out_final
+        # 云 initial division I is written "i'-"
+        if initials['trad'][initial_index] == '云' and '三' not in finals['_div'][final_index]:
+            out_str = "i'" + out_final
 
         # convert tone
         if tone == 2:
